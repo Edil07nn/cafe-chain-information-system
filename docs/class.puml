@@ -1,0 +1,164 @@
+
+@startuml
+title Кафе желісінің ақпараттық жүйесі — Class диаграммасы
+
+left to right direction
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam nodesep 25
+skinparam ranksep 30
+
+skinparam class {
+    BackgroundColor white
+    BorderColor black
+    ArrowColor black
+}
+
+class "User\nПайдаланушы" as User {
+    userId: string
+    login: string
+    password: string
+    role: string
+    --
+    login()
+    logout()
+}
+
+class "Client\nКлиент" as Client {
+    clientId: string
+    name: string
+    phone: string
+    --
+    createOrder()
+    viewMenu()
+}
+
+class "Waiter\nОфициант" as Waiter {
+    waiterId: string
+    name: string
+    --
+    createOrder()
+    viewMenu()
+}
+
+class "Cashier\nКассир" as Cashier {
+    cashierId: string
+    name: string
+    --
+    registerOrder()
+    registerPayment()
+}
+
+class "KitchenEmployee\nАспүй қызметкері" as KitchenEmployee {
+    employeeId: string
+    name: string
+    --
+    updateOrderStatus()
+}
+
+class "BranchManager\nФилиал менеджері" as BranchManager {
+    managerId: string
+    name: string
+    --
+    generateReport()
+    manageMenu()
+}
+
+class "SystemAdmin\nЖүйе әкімшісі" as SystemAdmin {
+    adminId: string
+    name: string
+    --
+    manageUsers()
+    manageMenu()
+}
+
+class "Order\nТапсырыс" as Order {
+    orderId: string
+    date: DateTime
+    totalAmount: decimal
+    status: string
+    --
+    calculateTotal()
+    changeStatus()
+}
+
+class "Payment\nТөлем" as Payment {
+    paymentId: string
+    amount: decimal
+    method: string
+    date: DateTime
+    status: string
+    --
+    registerPayment()
+}
+
+class "OrderItem\nТапсырыс позициясы" as OrderItem {
+    orderItemId: string
+    quantity: int
+    price: decimal
+    --
+    calculateAmount()
+}
+
+class "MenuItem\nМәзір өнімі" as MenuItem {
+    menuItemId: string
+    name: string
+    category: string
+    price: decimal
+    availability: boolean
+    --
+    checkAvailability()
+}
+
+class "Report\nЕсеп" as Report {
+    reportId: string
+    type: string
+    dateFrom: DateTime
+    dateTo: DateTime
+    --
+    generate()
+}
+
+' Мұрагерлік байланыстары
+User <|-- Client
+User <|-- Waiter
+User <|-- Cashier
+User <|-- KitchenEmployee
+User <|-- BranchManager
+User <|-- SystemAdmin
+
+' Тапсырыс қалыптастыру байланыстары
+Client "1" -- "0..*" Order : қалыптастырады
+Waiter "1" -- "0..*" Order : клиент тапсырысын қалыптастырады
+Cashier "1" -- "0..*" Order : тіркейді
+KitchenEmployee "1" -- "0..*" Order : мәртебесін өзгертеді
+
+' Тапсырыс құрамы
+Order "1" *-- "1..*" OrderItem : құрамында
+OrderItem "*" --> "1" MenuItem : байланысты
+
+' Төлем
+Order "1" -- "1" Payment : тіркеледі
+
+' Мәзірді басқару
+BranchManager "1" --> "0..*" MenuItem : басқарады
+SystemAdmin "1" --> "0..*" MenuItem : басқарады
+
+' Есептер
+BranchManager "1" --> "0..*" Report : қалыптастырады
+SystemAdmin "1" --> "0..*" Report : қалыптастырады
+
+' Орналасуды реттеу
+Client -[hidden]right- Waiter
+Waiter -[hidden]right- Cashier
+Cashier -[hidden]right- KitchenEmployee
+KitchenEmployee -[hidden]right- BranchManager
+BranchManager -[hidden]right- SystemAdmin
+
+Payment -[hidden]right- OrderItem
+OrderItem -[hidden]right- MenuItem
+
+@enduml

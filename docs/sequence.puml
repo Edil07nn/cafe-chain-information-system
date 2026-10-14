@@ -1,0 +1,80 @@
+
+@startuml
+title "Кафе желісінің ақпараттық жүйесі" — Тапсырыс қалыптастыру сценарийі
+
+hide footbox
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+skinparam ParticipantPadding 25
+skinparam BoxPadding 10
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam sequence {
+    ArrowColor black
+    LifeLineBorderColor #333333
+    LifeLineBackgroundColor white
+    ParticipantBorderColor #333333
+    ParticipantBackgroundColor #E8EDF3
+    ParticipantFontColor black
+    LifeLineStyle dashed
+}
+
+actor "Клиент / Официант" as Client
+participant "User Interface\nПайдаланушы интерфейсі" as UI
+participant "Order Module\nТапсырыстар модулі" as Order
+participant "Menu Module\nМәзір модулі" as Menu
+database "Database\nДерекқор" as DB
+participant "Kitchen Employee\nАспүй қызметкері" as Kitchen
+
+Client -> UI : 1. Тапсырыс қалыптастыруды бастау
+activate UI
+
+UI -> Menu : 2. Мәзірді сұрау
+activate Menu
+
+Menu -> DB : 3. Мәзір өнімдерін алу
+activate DB
+
+DB --> Menu : 4. Өнімдер тізімі
+deactivate DB
+
+Menu --> UI : 5. Мәзірді көрсету
+deactivate Menu
+
+Client -> UI : 6. Өнімді таңдау
+
+UI -> Order : 7. Өнімді тапсырысқа қосу
+activate Order
+
+Order -> Menu : 8. Өнімнің қолжетімділігін тексеру
+activate Menu
+
+Menu -> DB : 9. Қолжетімділікті тексеру
+activate DB
+
+DB --> Menu : 10. Өнім қолжетімді
+deactivate DB
+Menu --> Order : Қолжетімділік расталды
+deactivate Menu
+
+Order -> DB : 11. Тапсырысты сақтау
+activate DB
+
+DB --> Order : 12. Тапсырыс сақталды
+deactivate DB
+
+Order --> UI : 13. Жалпы соманы көрсету
+
+Client -> UI : 14. Тапсырысты растау
+
+Order -> DB : 15. Мәртебе = Қабылданды
+
+Order -> Kitchen : 16. Жаңа тапсырыс туралы хабарлама
+activate Kitchen
+
+deactivate Kitchen
+deactivate Order
+deactivate UI
+
+@enduml
