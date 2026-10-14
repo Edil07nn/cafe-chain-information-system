@@ -285,3 +285,64 @@ VALUES
 UPDATE Payments
 SET PaymentMethod = 'Карта'
 WHERE PaymentId= 3;
+
+
+INSERT INTO Categories (CategoryName)
+VALUES
+(N'Фастфуд'),
+(N'Гарнирлер'),
+(N'Таңғы ас');
+
+INSERT INTO MenuItems
+    (ItemName, Description, Price, CategoryId, IsAvailable)
+VALUES
+(N'Қуырдақ', N'Қазақтың дәстүрлі ет тағамы', 2800, 1, 1),
+(N'Көкөніс салаты', N'Жаңа піскен көкөністер', 1500, 2, 1),
+(N'Апельсин шырыны', N'Табиғи жеміс шырыны', 900, 3, 1),
+(N'Балмұздақ', N'Ванильді балмұздақ', 800, 4, 1),
+(N'Чизбургер', N'Ірімшік қосылған бургер', 1700, 5, 1),
+(N'Картоп фри', N'Қуырылған картоп', 1000, 6, 1),
+(N'Омлет', N'Жұмыртқадан дайындалған таңғы ас', 1200, 7, 1);
+
+
+INSERT INTO BranchInventory
+    (BranchId, MenuItemId, Quantity)
+VALUES
+-- Орталық филиал
+(1, 7, 15),
+(1, 8, 20),
+(1, 9, 40),
+(1, 10, 15),
+(1, 11, 25),
+(1, 12, 30),
+(1, 13, 20),
+
+-- Солтүстік филиал
+(2, 7, 20),
+(2, 8, 15),
+(2, 9, 30),
+(2, 10, 10),
+(2, 11, 20),
+(2, 12, 25),
+(2, 13, 15),
+
+-- Оңтүстік филиал
+(3, 7, 12),
+(3, 8, 18),
+(3, 9, 25),
+(3, 10, 12),
+(3, 11, 15),
+(3, 12, 20),
+(3, 13, 10);
+
+
+INSERT INTO Orders
+    (BranchId, ClientName, Status, TotalAmount)
+VALUES
+    (1, N'Әлихан', N'Қабылданды', 4600);
+
+
+UPDATE Orders
+SET TotalAmount = 3700
+WHERE OrderId = 5;
+GO
