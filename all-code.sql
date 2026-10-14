@@ -2,6 +2,7 @@
 GO
 
 --тексеру1
+--істеді
 
 CREATE TABLE Branches
 (
