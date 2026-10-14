@@ -1,7 +1,7 @@
 ﻿CREATE DATABASE CafeNetworkDB;
 GO
 
-
+--тексеру1
 
 CREATE TABLE Branches
 (
