@@ -1,0 +1,148 @@
+
+@startuml
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype polyline
+skinparam defaultFontName Arial
+skinparam defaultFontSize 16
+skinparam nodesep 0.65
+skinparam ranksep 0.55
+skinparam ArrowColor black
+skinparam ArrowThickness 1.5
+
+skinparam actor {
+  BackgroundColor white
+  BorderColor black
+  FontColor black
+}
+skinparam usecase {
+  BackgroundColor white
+  BorderColor black
+  FontColor black
+  BorderThickness 1.5
+}
+skinparam rectangle {
+  BackgroundColor white
+  BorderColor #70B0C8
+  BorderThickness 1.5
+}
+
+actor "Клиент" as Client
+actor "Официант" as Waiter
+actor "Кассир" as Cashier
+
+actor "Жүйе әкімшісі" as Admin
+actor "Филиал\nменеджері" as Manager
+actor "Асуй\nқызметкері" as Service
+
+rectangle "Кафе желісінің АЖ" as SYS {
+
+  together {
+    usecase "Жүйеге кіру" as C1
+    usecase "Мәзірді қарау" as C2
+    usecase "Мәзірден іздеу" as C3
+    usecase "Тапсырыс қалыптастыру" as C4
+  }
+
+  together {
+    usecase "Жүйеге кіру" as W1
+    usecase "Мәзірді қарау" as W2
+    usecase "Мәзірден іздеу" as W3
+    usecase "Тапсырыс қалыптастыру" as W4
+  }
+
+  together {
+    usecase "Жүйеге кіру" as K1
+    usecase "Тапсырысты тіркеу" as K2
+    usecase "Төлемді тіркеу" as K3
+  }
+
+  together {
+    usecase "Жүйеге кіру" as A1
+    usecase "Пайдаланушыларды\nбасқару" as A2
+    usecase "Мәзірді басқару" as A3
+  }
+
+  together {
+    usecase "Жүйеге кіру" as M1
+    usecase "Есеп қалыптастыру" as M2
+    usecase "Мәзірді басқару" as M3
+  }
+
+  together {
+    usecase "Жүйеге кіру" as S1
+    usecase "Тапсырыс мәртебесін\nөзгерту" as S2
+  }
+
+  ' Сол жақтағы клиент әрекеттері
+  C1 -[hidden]down- C2
+  C2 -[hidden]down- C3
+  C3 -[hidden]down- C4
+
+  ' Официант әрекеттері
+  W1 -[hidden]down- W2
+  W2 -[hidden]down- W3
+  W3 -[hidden]down- W4
+
+  ' Кассир әрекеттері
+  K1 -[hidden]down- K2
+  K2 -[hidden]down- K3
+
+  ' Оң жақтағы әкімші әрекеттері
+  A1 -[hidden]down- A2
+  A2 -[hidden]down- A3
+
+  ' Менеджер әрекеттері
+  M1 -[hidden]down- M2
+  M2 -[hidden]down- M3
+
+  ' Қызметкер әрекеттері
+  S1 -[hidden]down- S2
+
+  ' Екі бағанның арақашықтығы
+  C1 -[hidden]right- A1
+  W1 -[hidden]right- M1
+  K1 -[hidden]right- S1
+
+  C4 -[hidden]down- W1
+  W4 -[hidden]down- K1
+  A3 -[hidden]down- M1
+  M3 -[hidden]down- S1
+}
+
+Client -- C1
+Client -- C2
+Client -- C3
+Client -- C4
+
+Waiter -- W1
+Waiter -- W2
+Waiter -- W3
+Waiter -- W4
+
+Cashier -- K1
+Cashier -- K2
+Cashier -- K3
+
+Admin -- A1
+Admin -- A2
+Admin -- A3
+
+Manager -- M1
+Manager -- M2
+Manager -- M3
+
+Service -- S1
+Service -- S2
+
+Client -[hidden]right- SYS
+Waiter -[hidden]right- SYS
+Cashier -[hidden]right- SYS
+
+SYS -[hidden]right- Admin
+SYS -[hidden]right- Manager
+SYS -[hidden]right- Service
+
+@enduml
