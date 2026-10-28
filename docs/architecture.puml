@@ -1,0 +1,114 @@
+
+@startuml
+
+top to bottom direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+skinparam nodesep 40
+skinparam ranksep 55
+
+skinparam ArrowThickness 1.5
+skinparam ArrowColor #346B9D
+
+skinparam package {
+  BorderColor #417DAB
+  FontColor #17365D
+  FontStyle bold
+}
+
+skinparam component {
+  BackgroundColor #FFFFFF
+  BorderColor #3A668A
+  FontColor #162B40
+}
+
+skinparam database {
+  BackgroundColor #F4E4FF
+  BorderColor #8452A3
+}
+
+title Кафе желісінің ақпараттық жүйесі\nҮш деңгейлі архитектура
+
+rectangle "ПАЙДАЛАНУШЫЛАР" #F0F0F0 {
+  actor "Клиент" as Client
+  actor "Официант" as Waiter
+  actor "Кассир" as Cashier
+  actor "Асүй\nқызметкері" as Kitchen
+  actor "Филиал\nменеджері" as Manager
+  actor "Жүйе\nәкімшісі" as Admin
+
+  Client -[hidden]right- Waiter
+  Waiter -[hidden]right- Cashier
+  Cashier -[hidden]right- Kitchen
+  Kitchen -[hidden]right- Manager
+  Manager -[hidden]right- Admin
+}
+
+package "1-ДЕҢГЕЙ: ПРЕЗЕНТАЦИЯ\nPresentation Layer" #E7F2FF {
+
+  component "ПАЙДАЛАНУШЫ ИНТЕРФЕЙСІ\n(User Interface - UI)\n\nЖүйеге кіру формасы\nМәзір және іздеу\nТапсырыс және төлем формалары\nБасқару панелі" as UI #D8EAFE
+}
+
+package "2-ДЕҢГЕЙ: ҚОЛДАНБАЛЫ ЛОГИКА\nBusiness Logic Layer" #E7F7EC {
+
+  component "Авторизация модулі\n\nКіруді тексеру\nРөлдерді анықтау" as AUTH
+
+  component "Мәзір модулі\n\nМәзірді қарау\nІздеу және басқару" as MENU
+
+  component "Тапсырыс модулі\n\nТапсырысты тіркеу\nМәртебесін өзгерту" as ORDERS
+
+  component "Төлем модулі\n\nТөлемді тіркеу\nТөлем деректерін өңдеу" as PAY
+
+  component "Есеп беру модулі\n\nФилиал есептері\nСатылым мәліметтері" as REPORT
+
+  AUTH -[hidden]right- MENU
+  MENU -[hidden]right- ORDERS
+  ORDERS -[hidden]right- PAY
+  PAY -[hidden]right- REPORT
+}
+
+package "3-ДЕҢГЕЙ: ДЕРЕКТЕР\nData Layer" #FFF3E4 {
+
+  component "ДЕРЕКТЕРГЕ ҚОЛ ЖЕТКІЗУ\nData Access Layer (DAL)\n\nSQL сұраныстарын орындау\nДеректерді оқу және өзгерту" as DAL #FFE4B9
+
+  database "Microsoft SQL Server\nCafeNetworkDB\n\nBranches | Roles | Users\nCategories | MenuItems\nOrders | OrderItems | Payments" as DB
+}
+
+' Пайдаланушылардың интерфейспен байланысы
+Client --> UI
+Waiter --> UI
+Cashier --> UI
+Kitchen --> UI
+Manager --> UI
+Admin --> UI
+
+' Интерфейстен бизнес-логикаға сұраныстар
+UI -down-> AUTH : Сұраныс
+UI -down-> MENU : Сұраныс
+UI -down-> ORDERS : Сұраныс
+UI -down-> PAY : Сұраныс
+UI -down-> REPORT : Сұраныс
+
+' Бизнес-логикадан DAL-ға сұраныстар
+AUTH -down-> DAL
+MENU -down-> DAL
+ORDERS -down-> DAL
+PAY -down-> DAL
+REPORT -down-> DAL
+
+' Дерекқорға сұраныс және жауап
+DAL -down-> DB : SQL сұраныс
+DB -up-> DAL : Деректер
+
+' Кері жауаптың негізгі бағыты
+DAL -up-> ORDERS : Нәтиже
+ORDERS -up-> UI : Жауап
+UI -up-> Client : Нәтижені көрсету
+
+@enduml

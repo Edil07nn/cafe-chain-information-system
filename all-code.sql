@@ -176,8 +176,6 @@ VALUES
 (N'Марат', N'marat', N'12345', 4, 1),
 (N'Арман', N'arman', N'12345', 5, 1);
 
-USE CafeNetworkDB;
-GO
 
 
 INSERT INTO Users
@@ -202,23 +200,19 @@ VALUES
 INSERT INTO OrderItems
     (OrderId, MenuItemId, Quantity, Price)
 VALUES
--- Тапсырыс №1
-(1, 1, 1, 2500),  -- Палау
-(1, 4, 2, 700),   -- Кола x2
+(1, 1, 1, 2500),  
+(1, 4, 2, 700),   
 
--- Тапсырыс №2
-(2, 2, 1, 3000),  -- Бешбарма?
-(2, 3, 1, 2200),  -- Цезарь
-(2, 5, 1, 500),   -- Шай
+(2, 2, 1, 3000),  
+(2, 3, 1, 2200),  
+(2, 5, 1, 500),   
 
--- Тапсырыс №3
-(3, 1, 1, 2500),  -- Палау
-(3, 6, 1, 1800),  -- Чизкейк
+(3, 1, 1, 2500),  
+(3, 6, 1, 1800),  
 
--- Тапсырыс №4
-(4, 3, 1, 2200),  -- Цезарь
-(4, 6, 1, 1800),  -- Чизкейк
-(4, 5, 1, 500);   -- Шай
+(4, 3, 1, 2200),  
+(4, 6, 1, 1800),  
+(4, 5, 1, 500);   
 
 
 
@@ -258,15 +252,13 @@ CREATE TABLE BranchInventory
 
 INSERT INTO BranchInventory (BranchId, MenuItemId, Quantity)
 VALUES
--- Орталық филиал
-(1, 1, 20),  -- Палау
-(1, 2, 15),  -- Бешбармақ
-(1, 3, 10),  -- Цезарь
-(1, 4, 50),  -- Кола
-(1, 5, 100), -- Шай
-(1, 6, 12),  -- Чизкейк
+(1, 1, 20),  
+(1, 2, 15), 
+(1, 3, 10),  
+(1, 4, 50),  
+(1, 5, 100), 
+(1, 6, 12),  
 
--- Солтүстік филиал
 (2, 1, 30),
 (2, 2, 20),
 (2, 3, 15),
@@ -274,7 +266,6 @@ VALUES
 (2, 5, 80),
 (2, 6, 10),
 
--- Оңтүстік филиал
 (3, 1, 25),
 (3, 2, 18),
 (3, 3, 12),
@@ -305,10 +296,17 @@ VALUES
 (N'Омлет', N'Жұмыртқадан дайындалған таңғы ас', 1200, 7, 1);
 
 
-INSERT INTO BranchInventory
-    (BranchId, MenuItemId, Quantity)
+
+ALTER TABLE Orders
+DROP CONSTRAINT FK_Orders_Users;
+GO
+
+ALTER TABLE Orders
+DROP COLUMN EmployeeId;
+GO
+
+INSERT INTO BranchInventory (BranchId, MenuItemId, Quantity)
 VALUES
--- Орталық филиал
 (1, 7, 15),
 (1, 8, 20),
 (1, 9, 40),
@@ -317,7 +315,6 @@ VALUES
 (1, 12, 30),
 (1, 13, 20),
 
--- Солтүстік филиал
 (2, 7, 20),
 (2, 8, 15),
 (2, 9, 30),
@@ -326,7 +323,6 @@ VALUES
 (2, 12, 25),
 (2, 13, 15),
 
--- Оңтүстік филиал
 (3, 7, 12),
 (3, 8, 18),
 (3, 9, 25),
@@ -345,4 +341,98 @@ VALUES
 UPDATE Orders
 SET TotalAmount = 3700
 WHERE OrderId = 5;
-GO
+
+
+
+SELECT Orders.ClientName ,Orders.TotalAmount as taps
+FROM Orders JOIN Branches
+ON Orders.BranchId = Branches.BranchId
+ON Categories.Category
+
+GROUP BY Orders.ClientName , Orders.TotalAmount, Branches.BranchId
+HAVING Orders.TotalAmount > 3800 AND Branches.BranchId=1;
+
+
+
+
+SELECT * FROM Branches;
+SELECT * FROM Roles;
+SELECT * FROM Users;
+SELECT * FROM Categories;
+SELECT * FROM MenuItems;
+SELECT * FROM Orders;
+SELECT * FROM OrderItems;
+SELECT * FROM Payments;
+SELECT * FROM BranchInventory;
+
+
+SELECT ItemName,Price from MenuItems
+WHERE Price > 2000;
+
+SELECT DISTINCT Status
+FROM Orders;
+
+SELECT DISTINCT PaymentMethod
+FROM Payments;
+
+SELECT ItemName, Price
+FROM MenuItems
+ORDER BY Price ASC;
+
+
+SELECT Categories.CategoryName , COUNT(MenuItems.MenuItemId) AS sany
+FROM Categories JOIN MenuItems
+ON Categories.CategoryId = MenuItems.CategoryId 
+GROUP BY Categories.CategoryId , Categories.CategoryName 
+
+SELECT MAX(Price), MIN(Price), SUM(Price) FROM MenuItems
+
+SELECT c.CategoryName, COUNT(m.MenuItemId) AS aaa
+FROM Categories c
+JOIN MenuItems m
+ON c.CategoryId = m.CategoryId
+GROUP BY c.CategoryId, c.CategoryName
+HAVING COUNT(m.MenuItemId) >= 2;
+
+
+SELECT Orders.OrderId AS [Тапсырыс нөмірі],
+Orders.ClientName AS [Клиент],
+Orders.OrderDate AS [Тапсырыс уақыты],
+Users.FullName AS [Кассир],
+Roles.RoleName AS [Рөлі]
+FROM Orders
+INNER JOIN Users ON Orders.CashierId = Users.UserId
+INNER JOIN Roles ON Users.RoleId = Roles.RoleId
+WHERE Roles.RoleId = 2;
+
+
+
+
+SELECT * FROM Branches;
+SELECT * FROM Roles;
+SELECT * FROM Users;
+SELECT * FROM Categories;
+SELECT * FROM MenuItems;
+SELECT * FROM Orders;
+SELECT * FROM OrderItems;
+SELECT * FROM Payments;
+SELECT * FROM BranchInventory;
+
+
+SELECT
+OrderId AS [Тапсырыс],
+ClientName AS [Клиент],
+Status AS [Бастапқы мәртебе],
+CASE
+  WHEN Status = N'Қабылданды'
+     THEN N'Кезекте'
+  WHEN Status = N'Дайындалуда'
+     THEN N'Асүйде дайындалып жатыр'
+  WHEN Status = N'Дайын'
+     THEN N'Беруге дайын'
+  WHEN Status = N'Төленді'
+     THEN N'Төлем жасалған'
+  ELSE N'Басқа мәртебе'
+END AS [Түсіндірме]
+FROM Orders;
+
